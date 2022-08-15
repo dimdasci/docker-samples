@@ -9,7 +9,9 @@ services:
     hostname: postgres_db
     restart: always
     environment:
-      POSTGRES_PASSWORD: esgpassw
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_password
     ports:
       - 5432:5432
     volumes:
@@ -33,7 +35,12 @@ services:
       MB_DB_DBNAME: postgres
       MB_DB_PORT: 5432
       MB_DB_USER: postgres
-      MB_DB_PASS: esgpassw
+      MB_DB_PASS_FILE: /run/secrets/db_password
       MB_DB_HOST: postgres_db
+    secrets:
+      - db_password
     ports:
       - 3000:3000
+secrets:
+   db_password:
+     file: db_password.txt      
