@@ -1,21 +1,39 @@
-version: '3.1'
+version: '3.9'
 
+volumes:
+  postgres_volume:
 services:
-
-  db:
-    image: postgres:14-alpine
+  postgres_db:
+    image: postgres:12
+    container_name: postgres_db
+    hostname: postgres_db
     restart: always
     environment:
-      POSTGRES_PASSWORD: example
-      POSTGRES_DB: mur
+      POSTGRES_PASSWORD: esgpassw
     ports:
       - 5432:5432
     volumes:
-      - ./db-data:/var/lib/postgresql/data 
-    
-
+      - postgres_volume:/var/lib/postgresql/data
   adminer:
     image: adminer
+    container_name: adminer_panel
+    hostname: adminer
     restart: always
     ports:
       - 8080:8080
+  metabaseapp:
+    image: metabase/metabase:v0.43.5 
+    container_name: metabaseapp
+    hostname: metabaseapp
+    restart: always
+    depends_on:
+      - postgres_db
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: postgres
+      MB_DB_PORT: 5432
+      MB_DB_USER: postgres
+      MB_DB_PASS: esgpassw
+      MB_DB_HOST: postgres_db
+    ports:
+      - 3000:3000
